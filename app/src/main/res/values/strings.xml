@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">OurApplication</string>
+    <string name="sign_in_username">sign_in_username</string>
+    <string name="sign_in_password">sign_in_password</string>
+    <string name="shared_preferences_file_name">ReadMeToGetYourSecret</string>
+
 </resources>
