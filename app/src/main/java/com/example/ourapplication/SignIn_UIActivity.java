@@ -1,25 +1,25 @@
 package com.example.ourapplication;
 
+import static com.example.ourapplication.HandleMessageWhat.*;
+
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Context;
-import android.content.SharedPreferences;
+import android.app.ProgressDialog;
 import android.os.Bundle;
-import android.os.NetworkOnMainThreadException;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputEditText;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import org.w3c.dom.DOMStringList;
 
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import java.sql.Connection;
+import java.util.List;
 
 
 public class SignIn_UIActivity extends AppCompatActivity {
@@ -27,23 +27,50 @@ public class SignIn_UIActivity extends AppCompatActivity {
     private TextInputEditText tietUsername;
     private TextInputEditText tietPassword;
     private Button bSignIn;
+    private ProgressDialog progressDialog;
+    private DB_DataProofreadingLooperThreadClass DB_DataProofreading_LT;
+
+    //用于数据库传递信息
+    private Handler handler=new Handler(Looper.getMainLooper()){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            Log.e(TAG,"父线程接收到信息");
+            switch (msg.what){
+                case INT_INCORRECT_USERNAME_OR_PASSWORD:
+                    progressDialog.dismiss();
+                    Toast.makeText(SignIn_UIActivity.this,"账号或密码错误",Toast.LENGTH_SHORT).show();
+
+                    break;
+                case INT_DATABASE_CONNECTION_FAILURE:
+                    Toast.makeText(SignIn_UIActivity.this,"服务器连接失败!",Toast.LENGTH_SHORT).show();
+                    break;
+                case INT_CORRECT_USERNAME_PASSWORD:
+                    //进行另一个页面的启动
+                    Log.e(TAG,"登录成功");
+                    break;
+            }
+        }
+    };
+
+
+
+
+
+
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signinui);
 
-//        this.tietUsername=findViewById(R.id.textUsername);
-//        this.tietPassword=findViewById(R.id.textPassword);
-//        this.bSignIn=findViewById(R.id.buttonSignIn);
+        init();
+
 //        this.bSignIn.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
-//
-//
-//
-//
-//
-//
 //            }
 //        });
 
@@ -54,42 +81,49 @@ public class SignIn_UIActivity extends AppCompatActivity {
 //            }
 //        }).start();
 
+        //启动数据库查询线程线程
+        DB_DataProofreading_LT.start();
 
+    }
 
-            DBOpenHelper hellp=new DBOpenHelper();
-            Connection con=hellp.getConnection();
+    private void init(){
+        initProgressDialog();
+        tietUsername=findViewById(R.id.InputEidtTextUsername);
+        tietPassword=findViewById(R.id.InputEidtTextPassword);
+        bSignIn=findViewById(R.id.buttonSignIn);
+//        创建数据库查询线程
+        DB_DataProofreading_LT=new DB_DataProofreadingLooperThreadClass();
+
+        bSignIn.setOnClickListener(OnClickListnenerOfSignInButton);
 
 
     }
 
-
-    private void sendRequestWithOkHttp(){
-
-                try {
-                    OkHttpClient client = new OkHttpClient();
-                    Request request = new Request.Builder()
-                            .url("http://www.baidu.com")
-                            .build();
-
-                    Response response = client.newCall(request).execute();
-                    String responseData = response.body().string();
-                    Log.e(TAG,responseData);
-                }catch (Exception e){
-                    e.printStackTrace();
-                    Log.e(TAG,"连接百度失败");
-                }
-
-
-    }
-    void showResponse(final String response) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Log.e(TAG,response);
-            }
-        });
+    //初始化弹窗
+    private void initProgressDialog() {
+        progressDialog = new ProgressDialog(SignIn_UIActivity.this);
+        progressDialog.setIndeterminate(false);//循环滚动
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.setMessage("正在登录请稍等...");
+        progressDialog.setCancelable(true);//false不能取消显示，true可以取消显示
     }
 
 
+    private View.OnClickListener OnClickListnenerOfSignInButton =new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+//            把本活动的Handler传递给子线程,这样子线程就能通过该Handler传递消息给主线程了
+            DB_DataProofreading_LT.handler.obtainMessage(INT_COMPLETE_CHILD_THREAD_HANDLER,handler).sendToTarget();
+            String[] stringsUsernameAndPassword={tietUsername.getText().toString(),tietPassword.getText().toString()};
+
+            Log.e(TAG,"用户名: "+stringsUsernameAndPassword[0]+"\t密码: "+stringsUsernameAndPassword[1]);
+            Message msg=new Message();
+            msg.what=INT_VERIFY_USERNAME_PASSWORD_IF_CORRECT;
+            msg.obj=stringsUsernameAndPassword;
+            //向子线程发送账号和密码
+            DB_DataProofreading_LT.handler.sendMessage(msg);
+            Log.e(TAG,"发送账号密码成功!");
+        }
+    };
 
 }
