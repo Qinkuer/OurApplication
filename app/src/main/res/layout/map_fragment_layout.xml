@@ -4,11 +4,10 @@
     android:layout_height="match_parent"
     >
 
-    <TextView
-        android:id="@+id/textTest1"
+    <com.baidu.mapapi.map.MapView
+        android:id="@+id/bmapView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="mapPage!" />
-
+        android:clickable="true" />
 
 </LinearLayout>
