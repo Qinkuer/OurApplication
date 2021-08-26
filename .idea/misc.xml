@@ -3,8 +3,18 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Android/OurApplication/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.1" />
+        <entry key="..\:/Android/OurApplication/app/src/main/res/drawable/ic_baseline_map_24.xml" value="0.1" />
+        <entry key="..\:/Android/OurApplication/app/src/main/res/drawable/ic_launcher_background.xml" value="0.1" />
         <entry key="..\:/Android/OurApplication/app/src/main/res/layout/activity_main.xml" value="0.264" />
+        <entry key="..\:/Android/OurApplication/app/src/main/res/layout/activity_main_interface.xml" value="0.1" />
         <entry key="..\:/Android/OurApplication/app/src/main/res/layout/activity_signinui.xml" value="0.1" />
+        <entry key="..\:/Android/OurApplication/app/src/main/res/layout/bottom_navigation_menu.xml" value="0.1" />
+        <entry key="..\:/Android/OurApplication/app/src/main/res/layout/lease_fragment_layout.xml" value="0.12552083333333333" />
+        <entry key="..\:/Android/OurApplication/app/src/main/res/layout/map_fragment_layout.xml" value="0.12552083333333333" />
+        <entry key="..\:/Android/OurApplication/app/src/main/res/layout/order_fragment_layout.xml" value="0.12552083333333333" />
+        <entry key="..\:/Android/OurApplication/app/src/main/res/layout/personal_fragment_layout.xml" value="0.12552083333333333" />
+        <entry key="..\:/Android/OurApplication/app/src/main/res/menu/bottom_navigation_menu.xml" value="0.1" />
       </map>
     </option>
   </component>

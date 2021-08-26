@@ -24,8 +24,8 @@ public class DB_DataProofreadingLooperThreadClass extends Thread {
     private final String user = "user_sharedparking";//用户名
     private final String password = "123456";//密码
 
-    private Connection connection;
-    public static Handler handler;
+    private Connection connection=null;
+    public static Handler handler=null;
     public static Handler Mainhandler=null;
 
 

@@ -36,9 +36,9 @@ public class SignIn_UIActivity extends AppCompatActivity {
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             Log.e(TAG,"父线程接收到信息");
+            progressDialog.dismiss();
             switch (msg.what){
                 case INT_INCORRECT_USERNAME_OR_PASSWORD:
-                    progressDialog.dismiss();
                     Toast.makeText(SignIn_UIActivity.this,"账号或密码错误",Toast.LENGTH_SHORT).show();
 
                     break;
@@ -52,10 +52,6 @@ public class SignIn_UIActivity extends AppCompatActivity {
             }
         }
     };
-
-
-
-
 
 
 
@@ -82,8 +78,8 @@ public class SignIn_UIActivity extends AppCompatActivity {
 //        }).start();
 
         //启动数据库查询线程线程
+//        启动线程
         DB_DataProofreading_LT.start();
-
     }
 
     private void init(){
@@ -113,6 +109,27 @@ public class SignIn_UIActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
 //            把本活动的Handler传递给子线程,这样子线程就能通过该Handler传递消息给主线程了
+            progressDialog.show();
+            //服务器连接失败,或者服务器没有开启
+            if(DB_DataProofreading_LT.handler==null){
+                Toast.makeText(SignIn_UIActivity.this,"服务器连接失败!",Toast.LENGTH_SHORT).show();
+                new Thread() {
+                    @Override
+                    public void run() {
+                        super.run();
+                        try {
+//                            延迟一段时间后关闭提示窗
+                            Thread.sleep(1000);
+                            progressDialog.dismiss();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }.start();
+
+
+                return;
+            }
             DB_DataProofreading_LT.handler.obtainMessage(INT_COMPLETE_CHILD_THREAD_HANDLER,handler).sendToTarget();
             String[] stringsUsernameAndPassword={tietUsername.getText().toString(),tietPassword.getText().toString()};
 

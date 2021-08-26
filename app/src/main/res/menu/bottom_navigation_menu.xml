@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/page_1_Map"
+        android:enabled="true"
+        android:icon="@drawable/ic_baseline_map_24"
+        android:title="@string/text_label_1"/>
+    <item
+        android:id="@+id/page_2_Order"
+        android:enabled="true"
+        android:icon="@drawable/ic_baseline_list_24"
+        android:title="@string/text_label_2"/>
+    <item
+        android:id="@+id/page_3_Lease"
+        android:enabled="true"
+        android:icon="@drawable/ic_baseline_local_atm_24"
+        android:title="@string/text_label_3"/>
+    <item
+        android:id="@+id/page_4_Personal"
+        android:enabled="true"
+        android:icon="@drawable/ic_baseline_person_24"
+        android:title="@string/text_label_4"/>
+</menu>

@@ -3,5 +3,9 @@
     <string name="sign_in_username">sign_in_username</string>
     <string name="sign_in_password">sign_in_password</string>
     <string name="shared_preferences_file_name">ReadMeToGetYourSecret</string>
+    <string name="text_label_1">地图</string>
+    <string name="text_label_2">订单</string>
+    <string name="text_label_3">出租</string>
+    <string name="text_label_4">个人</string>
 
 </resources>
