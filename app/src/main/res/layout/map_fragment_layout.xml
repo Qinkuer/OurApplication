@@ -1,13 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
+<AbsoluteLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <com.baidu.mapapi.map.MapView
         android:id="@+id/bmapView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clickable="true" />
+
+    <ImageView
+        android:id="@+id/imageView_Postioning"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_x="5dp"
+        android:layout_y="494dp"
+        android:background="@color/white66"
+        android:src="@drawable/ic_baseline_location_on_24" />
+
+
+</AbsoluteLayout>
+
+
+
+
 
 </LinearLayout>

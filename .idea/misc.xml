@@ -4,6 +4,9 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Android/OurApplication/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.1" />
+        <entry key="..\:/Android/OurApplication/app/src/main/res/drawable/ic_baseline_list_24.xml" value="0.14479166666666668" />
+        <entry key="..\:/Android/OurApplication/app/src/main/res/drawable/ic_baseline_local_parking_24.xml" value="0.12760416666666666" />
+        <entry key="..\:/Android/OurApplication/app/src/main/res/drawable/ic_baseline_location_on_24.xml" value="0.1296875" />
         <entry key="..\:/Android/OurApplication/app/src/main/res/drawable/ic_baseline_map_24.xml" value="0.1" />
         <entry key="..\:/Android/OurApplication/app/src/main/res/drawable/ic_baseline_person_24.xml" value="0.13177083333333334" />
         <entry key="..\:/Android/OurApplication/app/src/main/res/drawable/ic_launcher_background.xml" value="0.1" />
@@ -12,7 +15,7 @@
         <entry key="..\:/Android/OurApplication/app/src/main/res/layout/activity_signinui.xml" value="0.1" />
         <entry key="..\:/Android/OurApplication/app/src/main/res/layout/bottom_navigation_menu.xml" value="0.1" />
         <entry key="..\:/Android/OurApplication/app/src/main/res/layout/lease_fragment_layout.xml" value="0.12552083333333333" />
-        <entry key="..\:/Android/OurApplication/app/src/main/res/layout/map_fragment_layout.xml" value="0.12552083333333333" />
+        <entry key="..\:/Android/OurApplication/app/src/main/res/layout/map_fragment_layout.xml" value="0.12" />
         <entry key="..\:/Android/OurApplication/app/src/main/res/layout/order_fragment_layout.xml" value="0.12552083333333333" />
         <entry key="..\:/Android/OurApplication/app/src/main/res/layout/personal_fragment_layout.xml" value="0.12552083333333333" />
         <entry key="..\:/Android/OurApplication/app/src/main/res/menu/bottom_navigation_menu.xml" value="0.1" />
