@@ -1,10 +1,15 @@
 package com.example.ourapplication;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+
+import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -13,8 +18,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -31,11 +38,20 @@ import com.baidu.mapapi.map.BitmapDescriptorFactory;
 import com.baidu.mapapi.map.MapStatus;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
+import com.baidu.mapapi.map.Marker;
 import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.map.MyLocationConfiguration;
 import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.model.LatLng;
+import com.bigkoo.pickerview.builder.TimePickerBuilder;
+import com.bigkoo.pickerview.listener.OnTimeSelectListener;
+import com.bigkoo.pickerview.view.TimePickerView;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 
 public class MapFragment extends Fragment {
@@ -45,6 +61,7 @@ public class MapFragment extends Fragment {
     private View rootView;
     private LocationClient mLocationClient;
     private ImageView imageViewPostioning;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -83,8 +100,48 @@ public class MapFragment extends Fragment {
 
     }
 
+    BaiduMap.OnMarkerClickListener BM_OnMarkerClickListener = new BaiduMap.OnMarkerClickListener() {
+        //marker被点击时回调的方法
+        //若响应点击事件，返回true，否则返回false
+        //默认返回false
+        @Override
+        public boolean onMarkerClick(Marker marker) {
+            //时间选择器
 
+            Calendar selectedDate = Calendar.getInstance();//系统当前时间
+            Calendar endDate = Calendar.getInstance();//最长的时间
+            endDate.set(2025, 11, 31);
+            TimePickerView pvTime = new TimePickerBuilder(requireContext(), new OnTimeSelectListener() {
+                //确认选择日期
+                @Override
+                public void onTimeSelect(Date date, View v) {
 
+                    Toast.makeText(requireContext(), getTime(date), Toast.LENGTH_SHORT).show();
+
+                }
+            }).setType(new boolean[]{true, true, true, true, false, false})
+                    // 默认全部显示
+                    .setCancelText("取消")//取消按钮文字
+                    .setSubmitText("确认")//确认按钮文字
+                    .setTitleSize(20)//标题文字大小
+                    .setTitleText("选择时间")//标题文字
+                    .setOutSideCancelable(true)//点击屏幕，点在控件外部范围时，是否取消显示
+                    .isCyclic(true)//是否循环滚动
+                    .setRangDate(selectedDate,endDate)//起始终止年月日设定
+                    .setLabel("年","月","日","时","分","秒")//默认设置为年月日时分秒
+                    .isDialog(false)//是否显示为对话框样式
+                    .build();
+            pvTime.show();
+
+            Log.e(TAG,pvTime.toString());
+            return true;
+        }
+    };
+
+    private String getTime(Date date) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy年MM月dd日  HH:mm");
+        return format.format(date);
+    }
 
     private void init(){
         mMapView = rootView.findViewById(R.id.bmapView);
@@ -128,7 +185,16 @@ public class MapFragment extends Fragment {
 
         ReturnCurrentPosition(5000,1000);
         SetAllMaker();
+
+        mBaiduMap.setOnMarkerClickListener(BM_OnMarkerClickListener);
+
+
+
+
+
+
     }
+
 
     //构造地图数据
     public class MyLocationListener extends BDAbstractLocationListener {
@@ -144,12 +210,13 @@ public class MapFragment extends Fragment {
                     .direction(location.getDirection()).latitude(location.getLatitude())
                     .longitude(location.getLongitude()).build();
             mBaiduMap.setMyLocationData(locData);
-//            Log.e(TAG,"经纬度:"+String.valueOf(location.getLatitude())+"\t"+String.valueOf(location.getLongitude()));
+            Log.e(TAG,"经纬度:"+String.valueOf(location.getLatitude())+"\t"+String.valueOf(location.getLongitude()));
         }
 
 
     }
 
+    //把屏幕移动到你的位置
     public void ReturnCurrentPosition(int DelayTime1 ,int DelayTime2){
         new Thread(new Runnable() {
             @Override
@@ -168,25 +235,17 @@ public class MapFragment extends Fragment {
         }).start();
     }
 
+
+
     private void SetAllMaker(){
         SDKInitializer.initialize(this.requireContext());
         //定义Maker坐标点
-        LatLng point = new LatLng(37.421998, -122.184);
+        LatLng point = new LatLng(4.9E-324, 4.9E-324);
 //构建Marker图标
+        Bitmap bmm =getBitmap(this.requireContext(),R.mipmap.parking_space,0.7f);
 
-//        Bitmap bmm = BitmapFactory. decodeResource(getResources(),R.drawable.ic_baseline_local_parking_24);
-//        Bitmap bmm = BitmapFactory.decodeStream(getClass().getResourceAsStream("/res/drawable/parkingspace.png"));
-        Bitmap bmm =getBitmap(this.requireContext(),R.mipmap.parkingspace);
-        if(bmm==null){
-            Log.e(TAG,"转换成Bitmap失败");
-        }
         BitmapDescriptor bitmap = BitmapDescriptorFactory
                 .fromBitmap(bmm);
-                
-        if(bitmap==null){
-            Log.e(TAG,"停车位图片获取失败!");
-            return;
-        }
 //构建MarkerOption，用于在地图上添加Marker
         OverlayOptions option = new MarkerOptions()
                 .position(point)
@@ -197,8 +256,11 @@ public class MapFragment extends Fragment {
 
 
 
-//    a
-    private static Bitmap getBitmap(Context context,int vectorDrawableId) {
+//    因为版本的原因,不能使用:
+//Bitmap bmm = BitmapFactory. decodeResource(getResources(),R.drawable.ic_baseline_local_parking_24);
+//    只能用下面的方法
+//    第三个参数为放缩比例
+    private static Bitmap getBitmap(Context context,int vectorDrawableId,float scaling) {
         Bitmap bitmap_101=null;
         if (Build.VERSION.SDK_INT>Build.VERSION_CODES.LOLLIPOP){
             Drawable vectorDrawable = context.getDrawable(vectorDrawableId);
@@ -210,7 +272,17 @@ public class MapFragment extends Fragment {
         }else {
             bitmap_101 = BitmapFactory.decodeResource(context.getResources(), vectorDrawableId);
         }
-        return bitmap_101;
+
+
+// 获得图片的宽高
+        int width = bitmap_101.getWidth();
+        int height = bitmap_101.getHeight();
+
+        Matrix matrix = new Matrix();
+        matrix.postScale(scaling,  scaling);
+        Bitmap newbm = Bitmap.createBitmap(bitmap_101, 0, 0, width, height, matrix, true);
+        return newbm;
     }
+
 
 }

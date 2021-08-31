@@ -39,5 +39,29 @@
         <item name="textAppearanceOverline">@style/TextAppearance.MaterialComponents.Overline</item>
 
     </style>
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
 
+    <!--自定义对话框的主题-->
+    <style name="Dialog" parent="android:style/Theme.Dialog">
+        <item name="android:background">#00000000</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">true</item>
+    </style>
+
+    <!--自定义滑动日历弹框主题-->
+    <style name="CalendarDialog" parent="@android:style/Theme.Holo.Dialog">
+        <item name="android:background">#FFFFFF</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
+    <color name="colorPrimary">#8E24AA</color>
+    <color name="colorPrimaryDark">#5E35B1</color>
+    <color name="colorAccent">#00ACC1</color>
 </resources>
