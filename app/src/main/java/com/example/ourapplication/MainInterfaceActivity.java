@@ -94,7 +94,7 @@ public class MainInterfaceActivity extends AppCompatActivity {
         mapFragment=new MapFragment();
         supportFragmentTransaction.add(R.id.frame_layout_Main,mapFragment);
         supportFragmentTransaction.commit();
-        //先显示主页
+        //先显示主页,或者说默认显示主界面
         hideAllFragment(supportFragmentTransaction);
         supportFragmentTransaction.show(mapFragment);
 

@@ -12,11 +12,11 @@
         <entry key="..\:/Android/OurApplication/app/src/main/res/drawable/ic_launcher_background.xml" value="0.1" />
         <entry key="..\:/Android/OurApplication/app/src/main/res/layout/activity_main.xml" value="0.264" />
         <entry key="..\:/Android/OurApplication/app/src/main/res/layout/activity_main_interface.xml" value="0.1" />
-        <entry key="..\:/Android/OurApplication/app/src/main/res/layout/activity_signinui.xml" value="0.1" />
+        <entry key="..\:/Android/OurApplication/app/src/main/res/layout/activity_signinui.xml" value="0.264" />
         <entry key="..\:/Android/OurApplication/app/src/main/res/layout/bottom_navigation_menu.xml" value="0.1" />
-        <entry key="..\:/Android/OurApplication/app/src/main/res/layout/layout_complete_parking_information.xml" value="0.1" />
+        <entry key="..\:/Android/OurApplication/app/src/main/res/layout/layout_complete_parking_information.xml" value="0.30798479087452474" />
         <entry key="..\:/Android/OurApplication/app/src/main/res/layout/lease_fragment_layout.xml" value="0.12552083333333333" />
-        <entry key="..\:/Android/OurApplication/app/src/main/res/layout/map_fragment_layout.xml" value="0.12" />
+        <entry key="..\:/Android/OurApplication/app/src/main/res/layout/map_fragment_layout.xml" value="0.264" />
         <entry key="..\:/Android/OurApplication/app/src/main/res/layout/order_fragment_layout.xml" value="0.12552083333333333" />
         <entry key="..\:/Android/OurApplication/app/src/main/res/layout/personal_fragment_layout.xml" value="0.12552083333333333" />
         <entry key="..\:/Android/OurApplication/app/src/main/res/menu/bottom_navigation_menu.xml" value="0.1" />

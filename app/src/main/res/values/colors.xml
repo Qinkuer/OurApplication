@@ -8,4 +8,6 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="white66">#aaFFFFFF</color>
+    <color name="colorCompleteParkingInformationBackground">#FFFFFF</color>
+    <color name="parking_price">#FF7F76</color>
 </resources>
