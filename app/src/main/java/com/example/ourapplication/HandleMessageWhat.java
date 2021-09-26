@@ -17,5 +17,6 @@ public class HandleMessageWhat {
     public static final int INT_INCORRECT_USERNAME_OR_PASSWORD=89274;
     //数据库连接失败
     public static final int INT_DATABASE_CONNECTION_FAILURE=958613;
-
+    //数据库数据库查询完成
+    public static final int INT_READ_CARNUMBER_DATABASE_OK=846873;
 }
