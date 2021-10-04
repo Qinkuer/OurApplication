@@ -19,4 +19,9 @@ public class HandleMessageWhat {
     public static final int INT_DATABASE_CONNECTION_FAILURE=958613;
     //数据库数据库查询完成
     public static final int INT_READ_CARNUMBER_DATABASE_OK=846873;
+    //车牌号插入成功
+    public static final int INT_CAR_NUMBER_INPUT_SUCCESS=354745;
+    //服务器连接失败,或者数据库没有打开
+    public static final int INT_CONNECT_FAILED=5568168;
+
 }

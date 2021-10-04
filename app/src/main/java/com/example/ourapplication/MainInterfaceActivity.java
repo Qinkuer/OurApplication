@@ -26,7 +26,7 @@ public class MainInterfaceActivity extends AppCompatActivity {
     private LeaseFragment leaseFragment=null;
     private PersonalFragment personalFragment=null;
     private FragmentTransaction   supportFragmentTransaction;
-
+    private String UserName_HavedLoggedIn="test";
 
 
 
@@ -41,7 +41,7 @@ public class MainInterfaceActivity extends AppCompatActivity {
                 //这样写会使打开速度变快吧 理论上
                 case R.id.page_2_Order:
                    if(orderFragment==null){
-                        orderFragment=new OrderFragment();
+                        orderFragment=new OrderFragment(UserName_HavedLoggedIn);
                         supportFragmentTransaction.add(R.id.frame_layout_Main,orderFragment);
                     }
                     else
@@ -51,7 +51,7 @@ public class MainInterfaceActivity extends AppCompatActivity {
 
                 case R.id.page_3_Lease:
                     if(leaseFragment==null){
-                        leaseFragment=new LeaseFragment();
+                        leaseFragment=new LeaseFragment(UserName_HavedLoggedIn);
                         supportFragmentTransaction.add(R.id.frame_layout_Main,leaseFragment);
                     }
                     else
@@ -59,7 +59,7 @@ public class MainInterfaceActivity extends AppCompatActivity {
                     break;
                 case R.id.page_4_Personal:
                     if(personalFragment==null){
-                        personalFragment=new PersonalFragment();
+                        personalFragment=new PersonalFragment(UserName_HavedLoggedIn);
                         supportFragmentTransaction.add(R.id.frame_layout_Main,personalFragment);
                     }
                     else
@@ -83,6 +83,10 @@ public class MainInterfaceActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_interface);
+
+        if(this.UserName_HavedLoggedIn==null)//便于测试
+        this.UserName_HavedLoggedIn=getIntent().getStringExtra("UserName_HavedLoggedIn");
+
         init();
 
     }
@@ -91,7 +95,7 @@ public class MainInterfaceActivity extends AppCompatActivity {
         //由于androidx.fragment.app.Fragment和android.app.Fragment不是同一种.故这里不能用getFragmentManager().beginTransaction()获取FragmentTransaction实例
         //getFragmentManager()获取的是android.app.Fragment
         supportFragmentTransaction=getSupportFragmentManager().beginTransaction();
-        mapFragment=new MapFragment();
+        mapFragment=new MapFragment(this.UserName_HavedLoggedIn);
         supportFragmentTransaction.add(R.id.frame_layout_Main,mapFragment);
         supportFragmentTransaction.commit();
         //先显示主页,或者说默认显示主界面
@@ -107,6 +111,8 @@ public class MainInterfaceActivity extends AppCompatActivity {
 
     //隐藏所有Fragment
     public void hideAllFragment(FragmentTransaction fragmentTransaction){
+
+
         if(mapFragment!=null){
             fragmentTransaction.hide(mapFragment);
         }

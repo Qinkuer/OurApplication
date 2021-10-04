@@ -1,6 +1,7 @@
 package com.example.ourapplication;
 
 
+import static com.example.ourapplication.ConnectDataBaseClass.*;
 import static com.example.ourapplication.HandleMessageWhat.*;
 
 import android.os.Handler;
@@ -17,13 +18,7 @@ import java.sql.Statement;
 
 
 public class DB_DataProofreadingLooperThreadClass extends Thread {
-    private final String diver = "com.mysql.jdbc.Driver";
     private static String TAG="DB_DataProofreadingLooperThread";
-    private final String url = "jdbc:mysql://116.63.172.25:3306/SharedParking_db";
-//    private static String url = "jdbc:mysql://116.63.172.25:3306/SharedParking_db?serverTimezone=GMT%2B8&useSSL=FALSE";
-    private final String user = "user_sharedparking";//用户名
-    private final String password = "123456";//密码
-
     private Connection connection=null;
     public static Handler handler=null;
     public static Handler Mainhandler=null;
@@ -36,8 +31,8 @@ public class DB_DataProofreadingLooperThreadClass extends Thread {
         super.run();
 
         try {
-            Class.forName(diver);
-            connection = DriverManager.getConnection(url, user, password);//获取连接
+            Class.forName(STRING_DIVER);
+            connection = DriverManager.getConnection(STRING_URL_DATABASE, STRING_DATABASE_USER, STRING_DATABASE_USER_PASSWORD);//获取连接
             Log.e(TAG,"连接成功");
 
         } catch (ClassNotFoundException e) {
@@ -98,7 +93,7 @@ public class DB_DataProofreadingLooperThreadClass extends Thread {
             public void run() {
                 try {
                     if(connection==null) {
-                        connection = DriverManager.getConnection(url, user, password);//获取连接
+                        connection = DriverManager.getConnection(STRING_URL_DATABASE, STRING_DATABASE_USER, STRING_DATABASE_USER_PASSWORD);//获取连接
                         Log.e(TAG,"连接成功");
                     }
                     Log.e(TAG,"进行密码校对......");

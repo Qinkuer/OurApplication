@@ -1,6 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout_input_new_car_number"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:background="@color/colorCompleteParkingInformationBackground"
+        android:layout_width="220dp"
+        android:layout_height="150dp">
+            <TextView
+                app:layout_constraintTop_toTopOf="parent"
+                android:background="@color/item_frame_color"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"/>
+            <TextView
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:background="@color/item_frame_color"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"/>
+            <TextView
+                app:layout_constraintStart_toStartOf="parent"
+                android:background="@color/item_frame_color"
+                android:layout_width="2dp"
+                android:layout_height="match_parent"/>
+            <TextView
+                app:layout_constraintEnd_toEndOf="parent"
+                android:background="@color/item_frame_color"
+                android:layout_width="2dp"
+                android:layout_height="match_parent"/>
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textInputLayout_newCarNumber"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:counterMaxLength="9"
+            android:hint="新车牌号"
+            app:endIconMode="clear_text"
+            app:helperText="例如: 粤A154G2">
+            >
+            <!--                可能需要对车牌号进行正则表达式判断-->
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/InputEidtText_NewCarNumber"
+                android:digits="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ川蜀鄂甘陇赣黔贵桂黑沪吉冀晋津京辽鲁蒙闽宁青琼陕苏皖湘新渝豫粤滇云藏浙使澳港警领学-"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
+        <Button
+            android:id="@+id/button_Cancel_InputNewCarNumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="取消"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="5dp"
+            />
+        <Button
+            android:id="@+id/button_confirm_InputNewCarNumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="确认"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="5dp"
+            />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-</LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

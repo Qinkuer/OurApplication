@@ -5,6 +5,7 @@ import static com.example.ourapplication.HandleMessageWhat.*;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -47,6 +48,11 @@ public class SignIn_UIActivity extends AppCompatActivity {
                     break;
                 case INT_CORRECT_USERNAME_PASSWORD:
                     //进行另一个页面的启动
+                    Intent mainUI_intent=new Intent(getApplicationContext(),MainInterfaceActivity.class);
+                    mainUI_intent.putExtra("UserName_HavedLoggedIn",tietUsername.getText());
+                    startActivity(mainUI_intent);
+
+
                     Log.e(TAG,"登录成功");
                     break;
             }

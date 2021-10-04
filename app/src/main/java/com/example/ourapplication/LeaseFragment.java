@@ -12,6 +12,15 @@ import androidx.fragment.app.Fragment;
 
 public class LeaseFragment extends Fragment {
     private static final String TAG = "LeasseFragment";
+    private String UserName_HavedLoggedIn=null;
+
+
+    public LeaseFragment(String UserName){
+        super();
+        this.UserName_HavedLoggedIn=UserName;
+
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

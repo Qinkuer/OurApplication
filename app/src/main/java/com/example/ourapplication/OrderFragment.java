@@ -13,6 +13,15 @@ import androidx.fragment.app.Fragment;
 public class OrderFragment extends Fragment {
     private static final String TAG = "OrderFragment";
     private View  rootView;
+    private String UserName_HavedLoggedIn=null;
+
+
+    public OrderFragment(String UserName){
+        super();
+        this.UserName_HavedLoggedIn=UserName;
+
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 

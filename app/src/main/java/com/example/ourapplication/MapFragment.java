@@ -86,6 +86,14 @@ public class MapFragment extends Fragment {
     private FloatingActionButton fabPostioning;
     private GeoCoder geoCoder = null;
     private InputParkingInformationPopupWindow Any_ipipw=null;
+    private String UserName_HavedLoggedIn=null;
+
+
+    public MapFragment(String UserName){
+        super();
+        this.UserName_HavedLoggedIn=UserName;
+
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

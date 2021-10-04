@@ -2,6 +2,7 @@ package com.example.ourapplication;
 
 
 
+import static com.example.ourapplication.ConnectDataBaseClass.*;
 import static com.example.ourapplication.HandleMessageWhat.*;
 
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,11 +35,8 @@ public class PersonalFragment extends Fragment {
     private ListView lvCarNumbers=null;
     private CarNumberStringAdapter adapter;
     private String UserName_HavedLoggedIn="test";
-    private final String diver = "com.mysql.jdbc.Driver";
-    private final String url = "jdbc:mysql://116.63.172.25:3306/SharedParking_db";
-    private final String user = "user_sharedparking";//用户名
-    private final String password = "123456";//密码
     private ConstraintLayout clAddCarNumber=null;
+    private ArrayList<Integer>  db_CarNumber_is_null=new ArrayList<Integer>();//记录车牌数据库第几列是null
 //    private final int MaxCarNumbers=5;
     //用于数据库传递信息
     private Handler handler=new Handler(Looper.getMainLooper()){
@@ -46,13 +45,27 @@ public class PersonalFragment extends Fragment {
             super.handleMessage(msg);
             Log.e(TAG,"父线程接收到信息");
             switch (msg.what){
+                //读取用户拥有的车牌成功
                 case INT_READ_CARNUMBER_DATABASE_OK:
                     ReceiveAndCompleteCarNumbers((ArrayList<String>) msg.obj);
+                    break;
+                    //给用户插入新车牌成功
+                case INT_CAR_NUMBER_INPUT_SUCCESS:
+                    PutCarNumbersIntoListView();
+                    break;
+                case  INT_CONNECT_FAILED:
+                    Toast.makeText(requireActivity(), "服务器连接失败!XE##330",Toast.LENGTH_SHORT).show();
                     break;
             }
         }
     };
 
+
+
+    public PersonalFragment(String UserName){
+        super();
+        this.UserName_HavedLoggedIn=UserName;
+    }
 
 
 
@@ -72,6 +85,7 @@ public class PersonalFragment extends Fragment {
         PutCarNumbersIntoListView();
         adapter.notifyDataSetChanged();
         Log.e(TAG,String.valueOf(adapter.getCount()));
+        initSetOnClick();
     }
 
 
@@ -80,8 +94,10 @@ public class PersonalFragment extends Fragment {
             @Override
             public void run() {
                 ArrayList<String> CarNumbersAL=new ArrayList<String>();
+                db_CarNumber_is_null.clear();//将原本保存的数据库中哪一列是null的编号清除.
                 try {
-                    Connection connection = DriverManager.getConnection(url, user, password);//获取连接
+                    Class.forName(STRING_DIVER);
+                    Connection connection = DriverManager.getConnection(STRING_URL_DATABASE, STRING_DATABASE_USER, STRING_DATABASE_USER_PASSWORD);//获取连接
                     String sql = "select * from UserHavedCarNumbers_table where username ='"+UserName_HavedLoggedIn+"' ";
                     PreparedStatement statement =  connection.prepareStatement(sql);
                     ResultSet rs = statement.executeQuery();
@@ -92,11 +108,15 @@ public class PersonalFragment extends Fragment {
                         if(!j.equals("null")){
                             CarNumbersAL.add(j);
                         }
+                        else {
+                            db_CarNumber_is_null.add(i-1);
+                        }
 
                     }
 
-                } catch (SQLException throwables) {
+                } catch (SQLException | ClassNotFoundException throwables) {
                     Log.e(TAG,"数据库相关代码抛出异常1");
+                    handler.obtainMessage(INT_CONNECT_FAILED,null).sendToTarget();
                     throwables.printStackTrace();
                 }
                 Message msg= new Message();
@@ -127,14 +147,21 @@ public class PersonalFragment extends Fragment {
         clAddCarNumber.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
+//点击弹出窗口,
+                if(db_CarNumber_is_null.size()>=1){
+                    InputNewCarNumberPopupWindow IPIPopupWindow = new InputNewCarNumberPopupWindow(requireActivity(),UserName_HavedLoggedIn,db_CarNumber_is_null,handler);
 
-                    }
-                }).start();
+                    IPIPopupWindow.showAtLocation(rootView.findViewById(R.id.constraintLayout_Main_personal_fragment), Gravity.CENTER,0,0);
+
+                }
+                else{
+                    Toast.makeText(getContext(), "最多持有5个车牌!或者服务器未连接上",Toast.LENGTH_SHORT).show();
+                }
+
 
             }
         });
     }
+
+
 }
