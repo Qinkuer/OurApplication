@@ -13,4 +13,18 @@
     <color name="item_frame_color">#9ACDCDCD</color>
     <color name="gray_text">#8E8E8E</color>
     <color name="add_item_frame_color">#64D3FF</color>
+    <!-- Color for the text field's disabled state: 12% black -->
+    <color name="mtrl_textinput_disabled_color">#1F000000</color>
+    <!-- Color for the text field's default box stroke: 42% black -->
+    <color name="mtrl_textinput_default_box_stroke_color">#6B000000</color>
+    <!-- Color for the text field's hovered box stroke: 87% black -->
+    <color name="mtrl_textinput_hovered_box_stroke_color">#DE000000</color>
+    <!-- Color for the text field's focused box stroke: transparent -->
+    <color name="mtrl_textinput_focused_box_stroke_color">#00000000</color>
+    <!-- Color for the text field's default box background: 4% black -->
+    <color name="mtrl_textinput_filled_box_default_background_color">#0A000000</color>
+    <color name="WhenParkingSapce">#43A047</color>
+    <color name="WhenParkingNotSapce">#DAFF9B30</color>
+    <color name="Color_floating_action_button_Add_LeaseParkingMarker">#9FD4FF5E</color>
+    <color name="Color_floating_action_button_Postioning">#8100F6BC</color>
 </resources>

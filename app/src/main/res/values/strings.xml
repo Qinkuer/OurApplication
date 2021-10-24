@@ -7,5 +7,17 @@
     <string name="text_label_2">订单</string>
     <string name="text_label_3">出租</string>
     <string name="text_label_4">个人</string>
-
+    <string name="String_Cancel">取消</string>
+    <string name="String_confirm">确认</string>
+    <string name="String_Message_to_delect">你确定要删除该车牌吗?</string>
+    <string name="String_Incomplete_Information">未将信息填完整,或时间选择错误!</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="welcome">"Welcome !"</string>
+    <string name="invalid_username">Not a valid username</string>
+    <string name="invalid_password">Password must be >5 characters</string>
+    <string name="login_failed">"Login failed"</string>
 </resources>

@@ -5,6 +5,7 @@ package com.example.ourapplication;
 import static com.example.ourapplication.ConnectDataBaseClass.*;
 import static com.example.ourapplication.HandleMessageWhat.*;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -14,12 +15,15 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -36,6 +40,7 @@ public class PersonalFragment extends Fragment {
     private CarNumberStringAdapter adapter;
     private String UserName_HavedLoggedIn="test";
     private ConstraintLayout clAddCarNumber=null;
+    private Button buttonChangePassword=null;
     private ArrayList<Integer>  db_CarNumber_is_null=new ArrayList<Integer>();//记录车牌数据库第几列是null
 //    private final int MaxCarNumbers=5;
     //用于数据库传递信息
@@ -47,7 +52,7 @@ public class PersonalFragment extends Fragment {
             switch (msg.what){
                 //读取用户拥有的车牌成功
                 case INT_READ_CARNUMBER_DATABASE_OK:
-                    ReceiveAndCompleteCarNumbers((ArrayList<String>) msg.obj);
+                    ReceiveAndCompleteCarNumbers((ArrayList<CarNumberIC>) msg.obj);
                     break;
                     //给用户插入新车牌成功
                 case INT_CAR_NUMBER_INPUT_SUCCESS:
@@ -79,12 +84,11 @@ public class PersonalFragment extends Fragment {
     private void init(){
         lvCarNumbers=rootView.findViewById(R.id.lv_CarNumberList);
         clAddCarNumber=rootView.findViewById(R.id.constraintLayout_AddCarNmuber);
-        adapter = new CarNumberStringAdapter(getContext(),R.layout.item_car_number_detailed_layout);
+        buttonChangePassword = rootView.findViewById(R.id.button_ChangePassword);
+        adapter = new CarNumberStringAdapter(getContext(),R.layout.item_car_number_detailed_layout,UserName_HavedLoggedIn,handler);
         lvCarNumbers.setAdapter(adapter);
-        Log.e(TAG,"适配器设置成功");
         PutCarNumbersIntoListView();
         adapter.notifyDataSetChanged();
-        Log.e(TAG,String.valueOf(adapter.getCount()));
         initSetOnClick();
     }
 
@@ -93,7 +97,7 @@ public class PersonalFragment extends Fragment {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                ArrayList<String> CarNumbersAL=new ArrayList<String>();
+                ArrayList<CarNumberIC> CarNumbersAL=new ArrayList<CarNumberIC>();
                 db_CarNumber_is_null.clear();//将原本保存的数据库中哪一列是null的编号清除.
                 try {
                     Class.forName(STRING_DIVER);
@@ -102,10 +106,9 @@ public class PersonalFragment extends Fragment {
                     PreparedStatement statement =  connection.prepareStatement(sql);
                     ResultSet rs = statement.executeQuery();
                     rs.next();
-                    for(int i=2;i<=6;i++){
-                        //表格中第一列是username 故从第二列开始是车牌号
-                        String j=rs.getString(i);
-                        if(!j.equals("null")){
+                    for(int i=2;i<=6;i++){//表格中第一列是username 故从第二列开始是车牌号
+                        CarNumberIC j=new CarNumberIC(rs.getString(i),i-1);
+                        if(!j.CarNumberString.equals("null")){
                             CarNumbersAL.add(j);
                         }
                         else {
@@ -113,7 +116,8 @@ public class PersonalFragment extends Fragment {
                         }
 
                     }
-
+                    connection.close();
+                    statement.close();
                 } catch (SQLException | ClassNotFoundException throwables) {
                     Log.e(TAG,"数据库相关代码抛出异常1");
                     handler.obtainMessage(INT_CONNECT_FAILED,null).sendToTarget();
@@ -131,19 +135,23 @@ public class PersonalFragment extends Fragment {
     }
 
     //将读取到的车牌号写入适配器和ListView;
-    private void ReceiveAndCompleteCarNumbers(ArrayList<String> al){
+    private void ReceiveAndCompleteCarNumbers(ArrayList<CarNumberIC> al){
 //        把原本已经写入的车牌全部删掉再重新添加
         adapter.clear();
         for(int i =0;i<al.size();i++)
-            adapter.add(al.get(i));
+            adapter.add(al.get(i));//add方法有点问题,说是添加在队尾,可是,序号是倒过来的,故这里进行了修调
         adapter.notifyDataSetChanged();
         //如果车牌数量大于等于5个 ,那就不能再添加车牌了
         if(adapter.getCount()>=5)clAddCarNumber.setVisibility(View.INVISIBLE);
+        else{
+            clAddCarNumber.setVisibility(View.VISIBLE);
+        }
 
     }
 
     //设置点击监听器
     private void initSetOnClick(){
+        //添加车牌事件
         clAddCarNumber.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -161,7 +169,31 @@ public class PersonalFragment extends Fragment {
 
             }
         });
+
+        //修改密码事件
+        buttonChangePassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ChangePasswordPopupWindow IPIPopupWindow = new ChangePasswordPopupWindow(requireActivity(),UserName_HavedLoggedIn);
+                IPIPopupWindow.showAtLocation(rootView.findViewById(R.id.constraintLayout_Main_personal_fragment), Gravity.CENTER,0,0);
+            }
+        });
+
+
+
+
+
     }
 
+
+}
+
+class CarNumberIC{
+    String CarNumberString;
+    int CarNumberCount;
+    public CarNumberIC(String c,int cc){
+        this.CarNumberCount=cc;
+        this.CarNumberString=c;
+    }
 
 }

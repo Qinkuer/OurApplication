@@ -26,7 +26,8 @@ public class MainInterfaceActivity extends AppCompatActivity {
     private LeaseFragment leaseFragment=null;
     private PersonalFragment personalFragment=null;
     private FragmentTransaction   supportFragmentTransaction;
-    private String UserName_HavedLoggedIn="test";
+    private String UserName_HavedLoggedIn=null;
+
 
 
 
@@ -85,8 +86,8 @@ public class MainInterfaceActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main_interface);
 
         if(this.UserName_HavedLoggedIn==null)//便于测试
-        this.UserName_HavedLoggedIn=getIntent().getStringExtra("UserName_HavedLoggedIn");
-
+            this.UserName_HavedLoggedIn=getIntent().getStringExtra("UserName_HavedLoggedIn");
+        Log.e(TAG,getIntent().getStringExtra("UserName_HavedLoggedIn"));
         init();
 
     }

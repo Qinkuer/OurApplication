@@ -49,10 +49,8 @@ public class SignIn_UIActivity extends AppCompatActivity {
                 case INT_CORRECT_USERNAME_PASSWORD:
                     //进行另一个页面的启动
                     Intent mainUI_intent=new Intent(getApplicationContext(),MainInterfaceActivity.class);
-                    mainUI_intent.putExtra("UserName_HavedLoggedIn",tietUsername.getText());
+                    mainUI_intent.putExtra("UserName_HavedLoggedIn",tietUsername.getText().toString());
                     startActivity(mainUI_intent);
-
-
                     Log.e(TAG,"登录成功");
                     break;
             }
@@ -107,7 +105,7 @@ public class SignIn_UIActivity extends AppCompatActivity {
         progressDialog.setIndeterminate(false);//循环滚动
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progressDialog.setMessage("正在登录请稍等...");
-        progressDialog.setCancelable(true);//false不能取消显示，true可以取消显示
+        progressDialog.setCancelable(false);//false不能取消显示，true可以取消显示
     }
 
 

@@ -1,6 +1,14 @@
 package com.example.ourapplication;
 
 
+import static com.example.ourapplication.ConnectDataBaseClass.*;
+import static com.example.ourapplication.HandleMessageWhat.INT_CONNECT_FAILED;
+import static com.example.ourapplication.HandleMessageWhat.INT_CREAT_ORDER_SUCCESS;
+import static com.example.ourapplication.HandleMessageWhat.INT_PARKING_TIME_OUT;
+import static com.example.ourapplication.HandleMessageWhat.INT_READ_CARNUMBER_DATABASE_OK;
+
+
+import android.app.ProgressDialog;
 import android.content.Context;
 
 import android.graphics.Bitmap;
@@ -14,6 +22,9 @@ import android.location.Address;
 
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -70,23 +81,40 @@ import java.util.List;
 
 public class MapFragment extends Fragment {
     private static final String TAG = "MapFragment";
-    private final String diver = "com.mysql.jdbc.Driver";
-    private final String url = "jdbc:mysql://116.63.172.25:3306/SharedParking_db";
-    private final String user = "user_sharedparking";//用户名
-    private final String password = "123456";//密码
     private final String DB_longitudeString="longitudeString";//经度
     private final String DB_latitudeString="latitudeString";//维度
-    private final String DB_ifBeOccupied="OccupiedBoolean";
+    private final String DB_ifBeOccupied="OccupiedBoolean";//该车为是否被用
     private final String DB_MarkerID="markerID";
     private MapView mMapView = null;
     private BaiduMap mBaiduMap=null;
     private View rootView;
     private LocationClient mLocationClient;
-//    private ImageView imageViewPostioning;
     private FloatingActionButton fabPostioning;
     private GeoCoder geoCoder = null;
     private InputParkingInformationPopupWindow Any_ipipw=null;
     private String UserName_HavedLoggedIn=null;
+    private ProgressDialog progressDialog;
+    private String addDetailAddress;
+
+    //
+    private Handler handler=new Handler(Looper.getMainLooper()){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what){
+                case INT_CREAT_ORDER_SUCCESS:
+//                    ChangeMarkerIconToRed((Marker) msg.obj);
+                    SetAllMaker();
+                    break;
+                case INT_PARKING_TIME_OUT:
+//                    ChangeMarkerIconToGreen((Marker) msg.obj);
+                    SetAllMaker();
+                    break;
+            }
+        }
+    };
+
+
 
 
     public MapFragment(String UserName){
@@ -94,6 +122,7 @@ public class MapFragment extends Fragment {
         this.UserName_HavedLoggedIn=UserName;
 
     }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -140,21 +169,26 @@ public class MapFragment extends Fragment {
         //默认返回false
         @Override
         public boolean onMarkerClick(Marker marker) {
+            progressDialog.show();
 //            为了能方便和GeoCoder联动
-            Any_ipipw = initPopWindow();
+//                        Log.e(TAG,"Marker被点击");
+
+
             //从数据库读取的MarkerID就是它的Title
 //            Log.e(TAG,marker.getTitle());
 //            Log.e(TAG,"Marker被点击");
+            Bundle bb= marker.getExtraInfo();
+            Any_ipipw = initPopWindow(bb,marker);
+            addDetailAddress=bb.getString("detailedAddress");
 
 
 
             //设置反地理编码位置坐标
             ReverseGeoCodeOption op = new ReverseGeoCodeOption();
-            LatLng latLng=new LatLng(marker.getExtraInfo().getDouble("latitudeString"),marker.getExtraInfo().getDouble("longitudeString"));
+            LatLng latLng=new LatLng(bb.getDouble("latitudeString"),bb.getDouble("longitudeString"));
             op.location(latLng);
             //发起反地理编码请求(经纬度->地址信息)
             geoCoder.reverseGeoCode(op);
-            Log.e(TAG,"点4");
             return true;
         }
     };
@@ -173,7 +207,8 @@ public class MapFragment extends Fragment {
 
         //初始化GerCoder;
         initGeoCoder();
-
+        //初始化弹窗
+        initProgressDialog();
 //开启交通图
         mBaiduMap.setTrafficEnabled(true);
 //        开启地图的定位图层
@@ -268,103 +303,90 @@ public class MapFragment extends Fragment {
         SDKInitializer.initialize(this.requireContext());
 //需要改 将子进程改成读取一个标记一个,而不是读取完再全部标记
 //        可正常读入
-////        从数据库中获取所有坐标点
-//        new Thread() {
-//            @Override
-//            public void run() {
-//                super.run();
-//                try {
-////遇到在数据库中读取数据成功,但是不能在百度地图上标记出来的问题
-////原因: 百度地图坐标LatLng(维度,经度),而不是经纬度
-//                    Class.forName(diver);
-//                    Connection connection = DriverManager.getConnection(url, user, password);//获取连接
-//                    String sql = new String("select * from SharedParkingMarkerCoordinate_table ");
-//                    PreparedStatement statement =  connection.prepareStatement(sql);
-//                    ResultSet rs = statement.executeQuery();
-//                    List<OverlayOptions> options = new ArrayList<OverlayOptions>();
-//                    while(rs.next()){
-////                        LatLng(维度,经度)
-//                        LatLng point = new LatLng(Double.valueOf(rs.getString(DB_latitudeString)), Double.valueOf(rs.getString(DB_longitudeString)));
-//                        boolean IfBeOccupied=rs.getBoolean(DB_ifBeOccupied);
-//                        Bitmap bmm;
-//                        //获取图标
-//                        if( !IfBeOccupied){
-//                            bmm =getBitmap(DB_context,R.mipmap.parking_space,0.7f);
-//                        }
-//                        else{
-//                            bmm =getBitmap(DB_context,R.mipmap.parking_full,0.7f);
-//                        }
-//                        BitmapDescriptor bitmap = BitmapDescriptorFactory.fromBitmap(bmm);
-//                        String MarkerTitle=rs.getString(DB_MarkerID);
-//                        //构建MarkerOption，用于在地图上添加Marker
-//                        OverlayOptions option = new MarkerOptions()
-//                                .position(point)
-//                                .icon(bitmap)
-//                                .title(MarkerTitle);
+//        从数据库中获取所有坐标点
+        new Thread() {
+            @Override
+            public void run() {
+                super.run();
+                try {
+//遇到在数据库中读取数据成功,但是不能在百度地图上标记出来的问题
+//原因: 百度地图坐标LatLng(维度,经度),而不是经纬度
+                    Class.forName(STRING_DIVER);
+                    Connection connection = DriverManager.getConnection(STRING_URL_DATABASE, STRING_DATABASE_USER, STRING_DATABASE_USER_PASSWORD);//获取连接
+                    Log.e(TAG,"连接成功");
+                    String sql = new String("select * from SharedParkingMarkerCoordinate_table ");
+                    PreparedStatement statement =  connection.prepareStatement(sql);
+                    ResultSet rs = statement.executeQuery();
+                    List<OverlayOptions> options = new ArrayList<OverlayOptions>();
+                    while(rs.next()){
+                        double latitude=Double.valueOf(rs.getString(DB_latitudeString));
+                        double longitude=Double.valueOf(rs.getString(DB_longitudeString));
+//                        LatLng(维度,经度)
+                        LatLng point = new LatLng(latitude, longitude);
+                        boolean IfBeOccupied=rs.getBoolean(DB_ifBeOccupied);
+                        Bitmap bmm;
+                        //获取图标
+                        if( !IfBeOccupied){
+                            bmm =getBitmap(DB_context,R.mipmap.parking_space,0.7f);
+                        }
+                        else{
+                            bmm =getBitmap(DB_context,R.mipmap.parking_full,0.7f);
+                        }
+                        BitmapDescriptor bitmap = BitmapDescriptorFactory.fromBitmap(bmm);
+                        String MarkerTitle=rs.getString(DB_MarkerID);
+                        //构建MarkerOption，用于在地图上添加Marker
+                        Bundle bundle=new Bundle();
+                        bundle.putDouble("latitudeString",latitude);//设置维度
+                        bundle.putDouble("longitudeString",longitude);//设置经度
+                        bundle.putString("markerID",rs.getString("markerID"));//设置markerID
+                        bundle.putString("detailedAddress",rs.getString("detailedAddress"));//设置详细地址
+                        bundle.putString("username",UserName_HavedLoggedIn);
+                        bundle.putBoolean(DB_ifBeOccupied,IfBeOccupied);
+                        bundle.putString("OrderID",rs.getString("OrderID"));
+                        OverlayOptions option = new MarkerOptions()
+                                .position(point)
+                                .icon(bitmap)
+                                .extraInfo(bundle)
+                                .title(MarkerTitle);
+
+                        options.add(option);
+                        Log.e(TAG,"生成一个标记 经度:"+rs.getString(DB_longitudeString)+"\t维度:"+rs.getString(DB_latitudeString));
+                    };
+                    mBaiduMap.addOverlays(options);
+                    connection.close();
+                    statement.close();
+                } catch (ClassNotFoundException | SQLException e) {
+                    Log.e(TAG,"反正就是失败了");
+                    e.printStackTrace();
+                }
+
+
+            }
+        }.start();
+
+//        //定义Maker坐标点
+//        LatLng point = new LatLng(37.421998, -122.084);
+////构建Marker图标
+//        Bitmap bmm =getBitmap(this.requireContext(),R.mipmap.parking_space,0.7f);
 //
-//                        options.add(option);
-//                        Log.e(TAG,"生成一个标记 经度:"+rs.getString(DB_longitudeString)+"\t维度:"+rs.getString(DB_latitudeString));
-//                    };
-//                    mBaiduMap.addOverlays(options);
-//                } catch (ClassNotFoundException | SQLException e) {
-//                    e.printStackTrace();
-//                }
+//        BitmapDescriptor bitmap = BitmapDescriptorFactory
+//                .fromBitmap(bmm);
 //
 //
-//            }
-//        }.start();
-
-        //定义Maker坐标点
-        LatLng point = new LatLng(37.421998, -122.084);
-//构建Marker图标
-        Bitmap bmm =getBitmap(this.requireContext(),R.mipmap.parking_space,0.7f);
-
-        BitmapDescriptor bitmap = BitmapDescriptorFactory
-                .fromBitmap(bmm);
-
-//        Geocoder geocoder = new Geocoder(getContext());
-//        boolean falg = geocoder.isPresent();
-//        Log.e("thistt", "the falg is " + falg);
-//        StringBuilder stringBuilder = new StringBuilder();
-//        try {
-//            List<Address> addresses = geocoder.getFromLocation(  37.421998,-122.084, 1);
-//            Log.e(TAG,"地址队列生成成功");
-//            if (addresses.size() > 0) {
-//                Address address = addresses.get(0);
-//                for (int i = 0; i < address.getMaxAddressLineIndex(); i++) {
-//                    //每一组地址里面还会有许多地址。这里我取的前2个地址。xxx街道-xxx位置
-//                    if (i == 0) {
-//                        stringBuilder.append(address.getAddressLine(i)).append("-");
-//                    }
+//        Bundle bundle=new Bundle();
+//        bundle.putDouble("latitudeString",37.421998);
+//        bundle.putDouble("longitudeString",-122.084);
 //
-//                    if (i == 1) {
-//                        stringBuilder.append(address.getAddressLine(i));
-//                        break;
-//                    }
-//                }
-//            }
-//            Log.d("thistt", "地址信息--->" + stringBuilder);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//            Log.e(TAG,"抛出异常!");
-//        }
-
-
-//        用于给Marker传递经纬度.
-        Bundle bundle=new Bundle();
-        bundle.putDouble("latitudeString",37.421998);
-        bundle.putDouble("longitudeString",-122.084);
-
-//构建MarkerOption，用于在地图上添加Marker
-        OverlayOptions option = new MarkerOptions()
-                .position(point)
-                .extraInfo(bundle)
-//                .extraInfo(new Bundle().putBundle("markerID",))
-                .icon(bitmap);
-
-//在地图上添加Marker，并显示
-
-        mBaiduMap.addOverlay(option);
+////构建MarkerOption，用于在地图上添加Marker
+//        OverlayOptions option = new MarkerOptions()
+//                .position(point)
+//                .extraInfo(bundle)
+////                .extraInfo(new Bundle().putBundle("markerID",))
+//                .icon(bitmap);
+//
+////在地图上添加Marker，并显示
+//
+//        mBaiduMap.addOverlay(option);
     }
 
 
@@ -396,8 +418,8 @@ public class MapFragment extends Fragment {
     }
 
 
-    private InputParkingInformationPopupWindow initPopWindow(){
-        InputParkingInformationPopupWindow IPIPopupWindow = new InputParkingInformationPopupWindow(requireActivity());
+    private InputParkingInformationPopupWindow initPopWindow(Bundle information,Marker marker){
+        InputParkingInformationPopupWindow IPIPopupWindow = new InputParkingInformationPopupWindow(requireActivity(),information,marker,handler);
 //        Log.e(TAG,"1");
         if(rootView!=null)
         IPIPopupWindow.showAtLocation(rootView.findViewById(R.id.constraintLayoutOfMapFragment), Gravity.CENTER,0,0);
@@ -415,16 +437,20 @@ public class MapFragment extends Fragment {
 //            当输入经纬度时,获取地址
             @Override
             public void onGetReverseGeoCodeResult(ReverseGeoCodeResult arg0) {
-                if(arg0!=null){
+                //有时候地址会为空
+                if(arg0!=null&&arg0.getAddress()!=null){
                     Toast.makeText(requireActivity(),arg0.getAddress(),Toast.LENGTH_SHORT).show();
                 }
-                else return;
-                if(Any_ipipw!=null){
-                    Any_ipipw.setAddressInformation(arg0.getAddress());
+                else {
+                    progressDialog.dismiss();
+                    return;
                 }
-                //获取点击的坐标地址
+                if(Any_ipipw!=null){
+                    Any_ipipw.setAddressInformation(arg0.getAddress()+"\n"+addDetailAddress);
+                }
+                //获取点击的坐标的地址
                 Log.e(TAG,arg0.getAddress());
-
+                progressDialog.dismiss();
             }
 
 //            当输入地址时,获取经纬度
@@ -434,5 +460,33 @@ public class MapFragment extends Fragment {
         });
 
     }
+
+    //初始化弹窗
+    private void initProgressDialog() {
+        progressDialog = new ProgressDialog(getContext());
+        progressDialog.setIndeterminate(false);//循环滚动
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.setMessage("正在获取信息请稍等...");
+        progressDialog.setCancelable(false);//false不能取消显示，true可以取消显示
+    }
+
+//当车位被占用后
+    private void ChangeMarkerIconToRed(Marker marker){
+        Bitmap bmm;
+        marker.getExtraInfo().putBoolean(DB_ifBeOccupied,true);
+        bmm =getBitmap(getContext(),R.mipmap.parking_full,0.7f);
+        BitmapDescriptor bitmap = BitmapDescriptorFactory.fromBitmap(bmm);
+        marker.setIcon(bitmap);
+    }
+
+    //车位占用时间结束
+    private void ChangeMarkerIconToGreen(Marker marker){
+        Bitmap bmm;
+        bmm =getBitmap(getContext(),R.mipmap.parking_space,0.7f);
+        marker.getExtraInfo().putBoolean(DB_ifBeOccupied,false);
+        BitmapDescriptor bitmap = BitmapDescriptorFactory.fromBitmap(bmm);
+        marker.setIcon(bitmap);
+    }
+
 
 }

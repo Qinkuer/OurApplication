@@ -5,6 +5,8 @@ import static com.example.ourapplication.ConnectDataBaseClass.STRING_DATABASE_US
 import static com.example.ourapplication.ConnectDataBaseClass.STRING_DIVER;
 import static com.example.ourapplication.ConnectDataBaseClass.STRING_URL_DATABASE;
 import static com.example.ourapplication.HandleMessageWhat.INT_CAR_NUMBER_INPUT_SUCCESS;
+import static com.example.ourapplication.HandleMessageWhat.INT_CHANGE_FAILED;
+import static com.example.ourapplication.HandleMessageWhat.INT_DATABASE_CONNECTION_FAILURE;
 import static com.example.ourapplication.HandleMessageWhat.INT_READ_CARNUMBER_DATABASE_OK;
 
 import android.annotation.SuppressLint;
@@ -58,6 +60,16 @@ public class InputNewCarNumberPopupWindow extends PopupWindow {
                 case INT_CAR_NUMBER_INPUT_SUCCESS:
                     AddCarNumberSuccess();
                     break;
+                //未知错误导致修改失败
+                case INT_CHANGE_FAILED:
+                    progressDialog.dismiss();
+                    Toast.makeText(mContext,"修改失败,请联系管理员!XX0000",Toast.LENGTH_SHORT).show();
+                    break;
+                //数据库连接失败
+                case INT_DATABASE_CONNECTION_FAILURE:
+                    progressDialog.dismiss();
+                    Toast.makeText(mContext,"失去服务器连接!",Toast.LENGTH_SHORT).show();
+                    break;
             }
         }
     };
@@ -69,7 +81,7 @@ public class InputNewCarNumberPopupWindow extends PopupWindow {
         this.db_CarNumber_is_null=AL_is_null;
         this.partentHandler=phander;
         init();
-
+        initProgressDialog();
     }
     private void init(){
         this.buttonCancle=mView.findViewById(R.id.button_Cancel_InputNewCarNumber);
@@ -124,6 +136,7 @@ public class InputNewCarNumberPopupWindow extends PopupWindow {
             @SuppressLint("LongLogTag")
             @Override
             public void onClick(View v) {
+                progressDialog.show();
                 //先判断输入是否正确,再写入数据库.
                 if(Pattern.matches(CarNumberPattern,tietNewCarNumber.getText())){
                     Log.e(TAG,"车牌符合规范");
@@ -145,17 +158,19 @@ public class InputNewCarNumberPopupWindow extends PopupWindow {
                                 PreparedStatement statement =  connection.prepareStatement(sql);
                                 int changeInger= statement.executeUpdate(sql);
                                 if(changeInger<1){
-                                    Toast.makeText(mContext, "添加失败,请联系管理员!XE4135351",Toast.LENGTH_SHORT).show();
+                                    handler.obtainMessage(INT_CHANGE_FAILED,null).sendToTarget();
                                     return ;
                                 }
 
 
-
+                                connection.close();
+                                statement.close();
                             } catch (SQLException | ClassNotFoundException throwables) {
                                 Log.e(TAG,"数据库相关代码抛出异常1");
+                                handler.obtainMessage(INT_DATABASE_CONNECTION_FAILURE).sendToTarget();
                                 throwables.printStackTrace();
                             }
-                            handler.obtainMessage(INT_CAR_NUMBER_INPUT_SUCCESS,null).sendToTarget();
+                            handler.obtainMessage(INT_CAR_NUMBER_INPUT_SUCCESS).sendToTarget();
                             Log.e(TAG,"插入成功!");
                         }
                     }).start();
@@ -172,11 +187,19 @@ public class InputNewCarNumberPopupWindow extends PopupWindow {
     }
 
 
-
+    //初始化弹窗
+    private void initProgressDialog() {
+        progressDialog = new ProgressDialog(mContext);
+        progressDialog.setIndeterminate(false);//循环滚动
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.setMessage("正在删除请稍等...");
+        progressDialog.setCancelable(false);//false不能取消显示，true可以取消显示
+    }
     private void AddCarNumberSuccess(){
         Toast.makeText(mContext, "添加车牌: "+tietNewCarNumber.getText()+" 成功!",Toast.LENGTH_SHORT).show();
         Log.e(TAG,"关闭");
         partentHandler.obtainMessage(INT_CAR_NUMBER_INPUT_SUCCESS,null).sendToTarget();
+        progressDialog.dismiss();
         dismiss();
 
     }

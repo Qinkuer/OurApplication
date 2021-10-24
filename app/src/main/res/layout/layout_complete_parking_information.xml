@@ -127,7 +127,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/textView5"
+            android:id="@+id/textView512312"
             android:layout_width="40dp"
             android:layout_height="wrap_content"
             android:text="现在"
@@ -142,7 +142,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="至"
-            app:layout_constraintStart_toEndOf="@+id/textView5"
+            app:layout_constraintStart_toEndOf="@+id/textView512312"
             app:layout_constraintEnd_toStartOf="@+id/textView_parking_end_time"
             app:layout_constraintTop_toBottomOf="@id/textView4"
             app:layout_constraintBottom_toBottomOf="parent"/>
@@ -178,22 +178,29 @@
         app:layout_constraintBottom_toTopOf="@id/constraintLayout_total_price"
         >
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/textInputLayout2222222222"
+
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                android:hint="车牌号"
+                android:hint="选择车牌号"
+                style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
                 >
-
-<!--                可能需要对车牌号进行正则表达式判断-->
-                <com.google.android.material.textfield.TextInputEditText
+                <AutoCompleteTextView
+                    android:id="@+id/textInputLayout_Choose_CarNumbers"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:digits="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ川蜀鄂甘陇赣黔贵桂黑沪吉冀晋津京辽鲁蒙闽宁青琼陕苏皖湘新渝豫粤滇云藏浙使澳港警领学"
+                    android:inputType="none"
                     />
+
+
+<!--&lt;!&ndash;                可能需要对车牌号进行正则表达式判断&ndash;&gt;-->
+<!--                <com.google.android.material.textfield.TextInputEditText-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:digits="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ川蜀鄂甘陇赣黔贵桂黑沪吉冀晋津京辽鲁蒙闽宁青琼陕苏皖湘新渝豫粤滇云藏浙使澳港警领学"-->
+<!--                    />-->
             </com.google.android.material.textfield.TextInputLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -211,6 +218,7 @@
         android:id="@+id/constraintLayout_total_price"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         app:layout_constraintTop_toBottomOf="@id/constraintLayout4"
         app:layout_constraintBottom_toTopOf="@id/constraintLayout6"
         >
